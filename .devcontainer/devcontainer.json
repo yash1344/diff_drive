@@ -1,0 +1,84 @@
+{
+  "name": "diff_drive_container",
+  // "workspaceFolder": "",  // opens folder when container is launched in vscode
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".." // build context is the parent of .devcontainer
+  },
+  // bydefault current workspace folder is mounted same as below by Dev container plugin
+  // "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/,type=bind",
+  // "workspaceFolder": "/workspace/",
+  // if wants to mount extra things
+  // "mounts": [
+  //   {
+  //     "source": "${localWorkspaceFolder}/My_Workspace_Folder",
+  //     "target": "/yash/My_Workspace_Folder",
+  //     "type": "bind"           // bind: sync with host; volume: seperate from host (managed by docker, persistance of container deleted)
+  //   }
+  // ],
+  // to forward X11 display from host to container so GUI apps can run 
+  "mounts": [
+    {
+      "source": "/tmp/.X11-unix",
+      "target": "/tmp/.X11-unix",
+      "type": "bind"
+    },
+    {
+      "source": "/mnt/wslg",
+      "target": "/mnt/wslg",
+      "type": "bind"
+    }
+    // {
+    //   "source": "/dev/input/",    // to access mouse and keyboard
+    //   "target": "/dev/input/",
+    //   "type": "bind"
+    // }
+  ],
+  "runArgs": [
+    "--name",
+    "diff_drive_container", // gives container a name
+    "--user",
+    "ros",
+    "--network=host",
+    "--ipc=host",
+    // "--privileged",
+    "--security-opt=seccomp:unconfined",
+    "--security-opt=apparmor:unconfined",
+    "--cap-add=SYS_PTRACE"
+    // "--device-cgroup-rule", "c 13:* rmw"  // access to mouse
+    // to fullfill realtime requirments of controller_manager
+    // "--ulimit",
+    // "rtprio=99",
+    // "--ulimit",
+    // "memlock=-1"
+  ],
+  "containerEnv": {
+    "DISPLAY": "${localEnv:DISPLAY}", // Needed for GUI try ":0" for windows
+    "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
+    "XDG_RUNTIME_DIR": "${localEnv:XDG_RUNTIME_DIR}",
+    "PULSE_SERVER": "${localEnv:PULSE_SERVER}",
+    "LIBGL_ALWAYS_SOFTWARE": "1" // Needed for software rendering of opengl
+  },
+
+  
+  "containerUser": "ros",
+  "postCreateCommand": "sudo addgroup realtime && sudo usermod -a -G realtime ros && echo '@realtime soft rtprio 99\n@realtime soft priority 99\n@realtime soft memlock unlimited\n@realtime hard rtprio 99\n@realtime hard priority 99\n@realtime hard memlock unlimited' | sudo tee -a /etc/security/limits.conf",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "syw-sustech.high-ros2-snippets",
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-themes",
+        "ms-vscode.cmake-tools",
+        "redhat.vscode-xml",
+        "KylinIdeTeam.cmake-intellisence",
+        "Ranch-Hand-Robotics.rde-pack",
+        "morningfrog.urdf-visualizer",
+        "KevinRose.vsc-python-indent",
+        "redhat.vscode-yaml",
+        "GitHub.copilot-chat",
+        "tomoki1207.pdf"
+      ]
+    }
+  }
+}
