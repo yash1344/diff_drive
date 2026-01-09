@@ -1,16 +1,19 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:property name="wheel_offset" value="0.05"/>
+    <xacro:property name="wheel_offset" value="0.01" />
 
     <!-- body link -->
-    <xacro:property name="body_box_size_x" value="2.0"/>
-    <xacro:property name="body_box_size_y" value="3"/>
-    <xacro:property name="body_box_size_z" value="0.75"/>
+    <xacro:property name="body_box_size_x" value="0.5" />
+    <xacro:property name="body_box_size_y" value="0.6" />
+    <xacro:property name="body_box_size_z" value="0.1" />
 
     <!-- Wheel -->
-    <xacro:property name="wheel_radius" value="0.4"/>
-    <xacro:property name="wheel_length" value="0.1"/>
+    <xacro:property name="wheel_radius" value="0.08" />
+    <xacro:property name="wheel_length" value="0.04" />
 
+    <!-- Lidar -->
+    <xacro:property name="lidar_radius" value="0.06" />
+    <xacro:property name="lidar_length" value="0.04" />
 
 </robot>

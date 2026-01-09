@@ -1,7 +1,13 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, RegisterEventHandler
+from launch.actions import (
+    DeclareLaunchArgument,
+    RegisterEventHandler,
+    IncludeLaunchDescription,
+    TimerAction,
+)
 from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
+from ament_index_python.packages import get_package_share_directory
 from launch.substitutions import (
     Command,
     FindExecutable,
@@ -11,6 +17,8 @@ from launch.substitutions import (
 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+import os
 
 
 def generate_launch_description():
@@ -23,9 +31,14 @@ def generate_launch_description():
             description="Start RViz2 automatically with this launch file.",
         )
     )
-
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_sim_time", default_value="false", description="Start with gazebo."
+        )
+    )
     # Initialize Arguments
     gui = LaunchConfiguration("gui")
+    use_sim_time = LaunchConfiguration("use_sim_time")
     pkg_name = "diff_drive_robot"
 
     # Get URDF via xacro
@@ -48,7 +61,6 @@ def generate_launch_description():
         [
             FindPackageShare(pkg_name),
             "config",
-            "controller",
             "robot_controllers.yaml",
         ]
     )
@@ -59,7 +71,7 @@ def generate_launch_description():
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[robot_controllers],
+        parameters=[robot_controllers, {"use_sim_time": use_sim_time}],
         output="both",
         remappings=[
             ("~/robot_description", "/robot_description"),
@@ -69,7 +81,7 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[robot_description],
+        parameters=[robot_description, {"use_sim_time": use_sim_time}],
     )
     rviz_node = Node(
         package="rviz2",
@@ -77,6 +89,7 @@ def generate_launch_description():
         name="rviz2",
         output="log",
         arguments=["-d", rviz_config_file],
+        parameters=[{"use_sim_time": use_sim_time}],
         condition=IfCondition(gui),
     )
 
@@ -100,12 +113,36 @@ def generate_launch_description():
         ],
     )
 
-    # Delay rviz start after `joint_state_broadcaster`
-    delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
-            on_exit=[rviz_node],
-        )
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("ros_gz_sim"),
+                    "launch",
+                    "gz_sim.launch.py",
+                ]
+            )
+        ),
+        condition=IfCondition(use_sim_time),
+    )
+
+    spawn_entity = Node(
+        package="ros_gz_sim",
+        executable="create",
+        arguments=["-topic", "robot_description", "-entity", "my_bot"],
+        output="screen",
+    )
+
+    delay_spawn_entity = TimerAction(
+        period=3.0,
+        actions=[spawn_entity],
+        condition=IfCondition(use_sim_time),
+    )
+
+    delay_rviz = TimerAction(
+        period=5.0,
+        actions=[rviz_node],
+        condition=IfCondition(gui),
     )
 
     # Delay start of robot_controller after `joint_state_broadcaster`
@@ -119,11 +156,13 @@ def generate_launch_description():
     )
 
     nodes = [
-        control_node,
         robot_state_pub_node,
+        control_node,
         joint_state_broadcaster_spawner,
-        delay_rviz_after_joint_state_broadcaster_spawner,
+        delay_rviz,
         delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
+        gazebo,
+        delay_spawn_entity,
     ]
 
     return LaunchDescription(declared_arguments + nodes)

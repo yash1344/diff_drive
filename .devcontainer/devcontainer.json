@@ -77,7 +77,8 @@
         "KevinRose.vsc-python-indent",
         "redhat.vscode-yaml",
         "GitHub.copilot-chat",
-        "tomoki1207.pdf"
+        "tomoki1207.pdf",
+        "mikoz.black-py"
       ]
     }
   }

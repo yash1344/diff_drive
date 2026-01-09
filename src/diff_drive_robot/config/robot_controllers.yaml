@@ -1,0 +1,50 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    diff_drive_controller:
+      type: diff_drive_controller/DiffDriveController
+
+
+diff_drive_controller:
+  ros__parameters:
+
+    # Wheel joints
+    left_wheel_names: ["body_to_lw"]
+    right_wheel_names: ["body_to_rw"]
+
+    # Robot geometry
+    wheel_separation: 0.52       # meters
+    wheel_radius: 0.08           # meters
+
+    # Interfaces
+    command_interfaces: ["velocity"]
+    state_interfaces: ["position", "velocity"]
+
+    # Frames
+    base_frame_id: base_link
+    odom_frame_id: odom
+    enable_odom_tf: true
+
+    # Publishing
+    publish_rate: 50.0
+
+    # Velocity limits
+    linear:
+      x:
+        has_velocity_limits: true
+        max_velocity: 1.0
+        min_velocity: -1.0
+        has_acceleration_limits: true
+        max_acceleration: 0.3
+
+    angular:
+      z:
+        has_velocity_limits: true
+        max_velocity: 1.0
+        has_acceleration_limits: true
+        max_acceleration: 0.3
+

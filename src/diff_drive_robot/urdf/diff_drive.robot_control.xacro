@@ -3,7 +3,8 @@
 
     <ros2_control name="DiffDriveRobotHardwareInterface" type="system">
         <hardware>
-            <plugin>mock_components/GenericSystem</plugin>
+            <!-- <plugin>mock_components/GenericSystem</plugin> -->
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
             <param name="calculate_dynamics">true</param>
         </hardware>
 
