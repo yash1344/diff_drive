@@ -79,7 +79,7 @@ def generate_launch_description():
     )
 
     delay_spawn_diff_bot = TimerAction(
-        period=15.0,
+        period=10.0,
         actions=[spawn_diff_bot],
     )
 
@@ -115,7 +115,7 @@ def generate_launch_description():
     )
 
     delay_rviz2 = TimerAction(
-        period=20.0,
+        period=10.0,
         actions=[rviz2],
     )
 

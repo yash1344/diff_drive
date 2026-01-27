@@ -1,0 +1,5 @@
+string pose_name
+---
+bool success
+geometry_msgs/PoseStamped pose
+string message

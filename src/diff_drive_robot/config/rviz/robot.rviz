@@ -7,6 +7,8 @@ Panels:
         - /Global Options1
         - /TF1/Frames1
         - /LaserScan1/Topic1
+        - /Map1
+        - /Map1/Topic1
       Splitter Ratio: 0.5176470875740051
     Tree Height: 583
   - Class: rviz_common/Selection
@@ -148,21 +150,22 @@ Visualization Manager:
       Show Names: true
       Tree:
         map:
-          odom:
-            base_link:
-              body_link:
-                caster_wheel_link:
-                  {}
-                caster_wheel_link2:
-                  {}
-                left_wheel_link:
-                  {}
-                lidar_frame:
-                  {}
-                right_wheel_link:
-                  {}
-              imu_link:
+          {}
+        odom:
+          base_link:
+            body_link:
+              caster_wheel_link:
                 {}
+              caster_wheel_link2:
+                {}
+              left_wheel_link:
+                {}
+              lidar_frame:
+                {}
+              right_wheel_link:
+                {}
+            imu_link:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -209,7 +212,7 @@ Visualization Manager:
       Name: Map
       Topic:
         Depth: 5
-        Durability Policy: Volatile
+        Durability Policy: Transient Local
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
@@ -351,7 +354,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 35.44082260131836
+      Scale: 22.70392608642578
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz_default_plugins)
       X: -0.29005593061447144
