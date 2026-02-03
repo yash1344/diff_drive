@@ -78,8 +78,8 @@
         "redhat.vscode-yaml",
         "GitHub.copilot-chat",
         "tomoki1207.pdf",
-        "mikoz.black-py",
-        "mhutchie.git-graph"
+        "mhutchie.git-graph",
+        "ms-python.black-formatter"
       ]
     }
   }

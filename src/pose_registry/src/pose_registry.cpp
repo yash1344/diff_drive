@@ -31,8 +31,6 @@ PoseRegistry::PoseRegistry() : rclcpp::Node("pose_registry")
             std::placeholders::_2));
 
     RCLCPP_INFO(this->get_logger(), "PoseRegistry node initialized");
-    RCLCPP_INFO(this->get_logger(), "Loaded %zu poses from file",
-                poses_.size());
 }
 
 PoseRegistry::~PoseRegistry() {}
@@ -75,6 +73,7 @@ void PoseRegistry::retrieve_pose_callback(
     std::shared_ptr<pose_registry_interfaces::srv::RetrievePose::Response>
         response)
 {
+    load_poses_from_file(poses_file_path_);
     try
     {
         auto it = poses_.find(request->pose_name);
